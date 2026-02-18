@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   LayoutDashboard,
   Clock,
@@ -25,11 +25,16 @@ import {
   Battery,
   Signal,
   Camera,
-  ChevronLeft
+  ChevronLeft,
+  Sparkles,
+  RotateCcw,
+  Zap,
+  Shield,
+  ArrowRight
 } from 'lucide-react';
 
 const DomusMasterDashboard = () => {
-  const [activeTab, setActiveTab] = useState('approval');
+  const [activeTab, setActiveTab] = useState('timebot');
   const [selectedPeriod, setSelectedPeriod] = useState('Denne Uge');
 
   // --- MOCK DATA ---
@@ -94,10 +99,40 @@ const DomusMasterDashboard = () => {
     </button>
   );
 
+  const ExplainerBanner = ({ icon: Icon, title, description, tags }) => (
+    <div className="bg-gradient-to-r from-[#0f172a] to-[#1e293b] rounded-xl p-5 mb-6 shadow-lg overflow-hidden relative">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#f59e0b]/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+      <div className="absolute bottom-0 left-1/2 w-48 h-24 bg-white/[0.02] rounded-full translate-y-1/2"></div>
+      <div className="relative flex items-start gap-4">
+        <div className="w-10 h-10 bg-[#f59e0b]/10 border border-[#f59e0b]/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+          <Icon size={20} className="text-[#f59e0b]" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <h3 className="text-white font-bold text-[15px] mb-1">{title}</h3>
+          <p className="text-slate-300 text-sm leading-relaxed mb-3">{description}</p>
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag, idx) => (
+              <span key={idx} className="inline-flex items-center gap-1 px-2.5 py-1 bg-white/[0.07] border border-white/10 rounded-full text-[11px] font-medium text-slate-300">
+                <Zap size={10} className="text-[#f59e0b]" />
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   // --- VIEWS ---
 
   const DashboardView = () => (
     <div className="space-y-6 animate-in fade-in duration-500">
+      <ExplainerBanner
+        icon={Sparkles}
+        title="Dit fulde overblik — samlet på ét sted"
+        description="AI'en overvåger automatisk alle tidsregistreringer, flagger afvigelser og giver dig realtidsindsigt i timeforbruget på tværs af alle projekter og medarbejdere."
+        tags={['AI-drevet', 'Realtidsoverblik', 'Automatisk overvågning']}
+      />
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, idx) => (
@@ -183,7 +218,14 @@ const DomusMasterDashboard = () => {
   );
 
   const SmartApprovalView = () => (
-    <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <ExplainerBanner
+        icon={Shield}
+        title="Smart Godkendelse — AI sorterer, du beslutter"
+        description="AI'en har allerede analyseret alle indberetninger og sorteret dem efter risiko. Du ser kun det der kræver din opmærksomhed — resten er klar til godkendelse med ét klik. Timer kan eksporteres direkte til e-conomic."
+        tags={['Risikoanalyse', 'Et-klik godkendelse', 'e-conomic integration']}
+      />
+    <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
       <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
         <div>
           <h2 className="text-lg font-bold text-[#1e293b]">Smart Godkendelse</h2>
@@ -251,10 +293,18 @@ const DomusMasterDashboard = () => {
         </tbody>
       </table>
     </div>
+    </div>
   );
 
   const ProjectEconomyView = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-in fade-in duration-500">
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <ExplainerBanner
+        icon={BarChart3}
+        title="Sagsøkonomi — hold styr på budgetterne i realtid"
+        description="AI'en forudser overskridelser før de sker, så du kan handle proaktivt. Alle timeregistreringer kobles automatisk til det rigtige projekt."
+        tags={['Budget-tracking', 'Prognose-AI', 'Automatisk kobling']}
+      />
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       {projects.map((proj, idx) => {
         const percentage = Math.min((proj.used / (proj.budget || 1)) * 100, 100);
         return (
@@ -293,10 +343,18 @@ const DomusMasterDashboard = () => {
         );
       })}
     </div>
+    </div>
   );
 
   const EmployeesView = () => (
-    <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden animate-in fade-in duration-500">
+    <div className="animate-in fade-in duration-500">
+      <ExplainerBanner
+        icon={Users}
+        title="Medarbejderoversigt — alle dine folk, ét overblik"
+        description="Se alle medarbejdere, deres roller og standard-projekter. AI'en holder øje med manglende indberetninger og sender automatisk påmindelser — så du slipper for at ringe rundt."
+        tags={['Automatiske rykkere', 'Standard-projekter', 'Status-overblik']}
+      />
+    <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
       <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
         <div>
           <h2 className="text-lg font-bold text-[#1e293b]">Medarbejdere</h2>
@@ -365,9 +423,16 @@ const DomusMasterDashboard = () => {
         </tbody>
       </table>
     </div>
+    </div>
   );
 
   const TimeBotDemoView = () => {
+    const [visibleCount, setVisibleCount] = useState(0);
+    const [isTyping, setIsTyping] = useState(false);
+    const [isComplete, setIsComplete] = useState(false);
+    const chatRef = useRef(null);
+    const timersRef = useRef([]);
+
     const chatMessages = [
       {
         sender: 'bot',
@@ -423,6 +488,91 @@ const DomusMasterDashboard = () => {
       },
     ];
 
+    const getActiveStep = (count) => {
+      if (count <= 0) return -1;
+      if (count <= 2) return 0;
+      if (count <= 3) return 1;
+      if (count <= 5) return 2;
+      return 3;
+    };
+
+    const activeStep = getActiveStep(visibleCount);
+
+    const startAnimation = useCallback(() => {
+      timersRef.current.forEach(t => clearTimeout(t));
+      timersRef.current = [];
+      setVisibleCount(0);
+      setIsComplete(false);
+      setIsTyping(false);
+
+      let totalDelay = 600;
+
+      chatMessages.forEach((msg, idx) => {
+        const isBot = msg.sender === 'bot';
+
+        if (isBot) {
+          const t1 = setTimeout(() => setIsTyping(true), totalDelay);
+          timersRef.current.push(t1);
+          totalDelay += 1400;
+        } else {
+          totalDelay += 800;
+        }
+
+        const t2 = setTimeout(() => {
+          setIsTyping(false);
+          setVisibleCount(idx + 1);
+        }, totalDelay);
+        timersRef.current.push(t2);
+
+        totalDelay += 500;
+      });
+
+      const t3 = setTimeout(() => setIsComplete(true), totalDelay + 300);
+      timersRef.current.push(t3);
+    }, []);
+
+    useEffect(() => {
+      startAnimation();
+      return () => timersRef.current.forEach(t => clearTimeout(t));
+    }, [startAnimation]);
+
+    useEffect(() => {
+      if (chatRef.current) {
+        chatRef.current.scrollTo({ top: chatRef.current.scrollHeight, behavior: 'smooth' });
+      }
+    }, [visibleCount, isTyping]);
+
+    const featureCards = [
+      {
+        icon: MessageSquare,
+        iconBg: 'bg-emerald-50',
+        iconColor: 'text-emerald-600',
+        title: 'Naturlig Samtale',
+        desc: 'Medarbejdere skriver bare hvad de har lavet — AI\'en forstår konteksten og registrerer automatisk projekt, timer og opgave.',
+      },
+      {
+        icon: Bot,
+        iconBg: 'bg-amber-50',
+        iconColor: 'text-amber-600',
+        title: 'Intelligent Genkendelse',
+        desc: 'TimeBot kender medarbejderens standard-projekt, husker tidligere opgaver, og stiller kun spørgsmål når noget er uklart.',
+      },
+      {
+        icon: CheckCircle,
+        iconBg: 'bg-blue-50',
+        iconColor: 'text-blue-600',
+        title: 'Bekræft & Godkend',
+        desc: 'Før registrering viser AI\'en en opsummering som medarbejderen bekræfter. Timerne sendes direkte til mester-dashboardet.',
+      },
+      {
+        icon: Clock,
+        iconBg: 'bg-purple-50',
+        iconColor: 'text-purple-600',
+        title: 'Proaktive Påmindelser',
+        desc: 'Har en medarbejder glemt at indberette? TimeBot sender automatisk en venlig rykker — så mesteren slipper for at ringe rundt.',
+      },
+    ];
+
     return (
       <div className="animate-in fade-in duration-500">
         <div className="text-center mb-8">
@@ -433,11 +583,21 @@ const DomusMasterDashboard = () => {
         <div className="flex flex-col lg:flex-row items-center lg:items-start justify-center gap-12">
           {/* Phone Mockup */}
           <div className="relative">
+            {/* Replay Button */}
+            {isComplete && (
+              <button
+                onClick={startAnimation}
+                className="absolute -bottom-14 left-1/2 -translate-x-1/2 flex items-center gap-2 px-5 py-2.5 bg-[#1e293b] text-white rounded-full text-sm font-medium hover:bg-slate-700 shadow-lg transition-all chat-bubble-in z-20"
+              >
+                <RotateCcw size={15} />
+                Afspil igen
+              </button>
+            )}
+
             {/* Phone Frame */}
             <div className="relative w-[320px] h-[660px] bg-[#1a1a1a] rounded-[3rem] shadow-2xl shadow-slate-900/30 border-[3px] border-[#2a2a2a] p-[3px]">
-              {/* Inner bezel */}
               <div className="w-full h-full bg-[#0a0a0a] rounded-[2.7rem] overflow-hidden flex flex-col">
-                
+
                 {/* Status Bar */}
                 <div className="bg-[#075e54] px-6 pt-3 pb-0">
                   <div className="flex justify-between items-center text-white text-[11px] mb-2">
@@ -466,28 +626,27 @@ const DomusMasterDashboard = () => {
                 </div>
 
                 {/* Chat Body */}
-                <div className="flex-1 overflow-y-auto bg-[#ece5dd]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23d5cec3\' fill-opacity=\'0.15\'%3E%3Cpath d=\'M20 20h10v10H20zM50 50h10v10H50zM80 20h10v10H80zM20 80h10v10H20zM110 110h10v10h-10zM140 50h10v10h-10zM50 140h10v10H50zM170 20h10v10h-10zM20 170h10v10H20zM140 140h10v10h-10zM170 170h10v10h-10z\'/%3E%3C/g%3E%3C/svg%3E")' }}>
+                <div ref={chatRef} className="flex-1 overflow-y-auto bg-[#ece5dd]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23d5cec3\' fill-opacity=\'0.15\'%3E%3Cpath d=\'M20 20h10v10H20zM50 50h10v10H50zM80 20h10v10H80zM20 80h10v10H20zM110 110h10v10h-10zM140 50h10v10h-10zM50 140h10v10H50zM170 20h10v10h-10zM20 170h10v10H20zM140 140h10v10h-10zM170 170h10v10h-10z\'/%3E%3C/g%3E%3C/svg%3E")' }}>
                   <div className="p-3 space-y-2">
                     {/* Date Pill */}
                     <div className="flex justify-center mb-2">
                       <span className="bg-white/80 text-[11px] text-slate-500 px-3 py-1 rounded-full shadow-sm font-medium">I DAG</span>
                     </div>
 
-                    {chatMessages.map((msg, idx) => (
-                      <div key={idx} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    {chatMessages.slice(0, visibleCount).map((msg, idx) => (
+                      <div key={idx} className={`flex chat-bubble-in ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                         <div className={`relative max-w-[82%] px-3 py-2 rounded-lg shadow-sm ${
                           msg.sender === 'user'
                             ? 'bg-[#dcf8c6] rounded-tr-none'
                             : 'bg-white rounded-tl-none'
                         }`}>
-                          {/* Chat bubble tail */}
                           <div className={`absolute top-0 w-3 h-3 ${
                             msg.sender === 'user'
                               ? '-right-1.5 bg-[#dcf8c6]'
                               : '-left-1.5 bg-white'
                           }`} style={{ clipPath: msg.sender === 'user' ? 'polygon(0 0, 0% 100%, 100% 0)' : 'polygon(100% 0, 0 0, 100% 100%)' }} />
-                          
-                          {msg.sender === 'bot' && idx <= 1 && (
+
+                          {msg.sender === 'bot' && idx === 0 && (
                             <p className="text-[11px] font-bold text-[#075e54] mb-0.5">DOMUS TimeBot</p>
                           )}
                           {msg.richContent ? (
@@ -509,15 +668,23 @@ const DomusMasterDashboard = () => {
                     ))}
 
                     {/* Typing indicator */}
-                    <div className="flex justify-start">
-                      <div className="bg-white px-4 py-3 rounded-lg rounded-tl-none shadow-sm">
-                        <div className="flex gap-1.5">
-                          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    {isTyping && (
+                      <div className="flex justify-start chat-bubble-in">
+                        <div className="bg-white px-4 py-3 rounded-lg rounded-tl-none shadow-sm">
+                          <div className="flex gap-1.5">
+                            <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
+
+                    {/* Empty state before animation starts */}
+                    {visibleCount === 0 && !isTyping && (
+                      <div className="flex items-center justify-center h-32 text-slate-400 text-xs">
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -542,45 +709,33 @@ const DomusMasterDashboard = () => {
 
           {/* Feature Description Cards */}
           <div className="max-w-sm space-y-4 pt-4">
-            <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
-                  <MessageSquare size={20} className="text-emerald-600" />
+            {featureCards.map((card, idx) => {
+              const isActive = activeStep === idx;
+              const CardIcon = card.icon;
+              return (
+                <div
+                  key={idx}
+                  className={`p-5 rounded-xl border shadow-sm transition-all duration-500 ${
+                    isActive
+                      ? 'bg-white border-l-4 border-l-[#f59e0b] border-t-slate-100 border-r-slate-100 border-b-slate-100 explainer-glow scale-[1.02]'
+                      : visibleCount > 0 && activeStep > idx
+                        ? 'bg-white border-slate-100 opacity-60'
+                        : 'bg-white border-slate-100 opacity-40'
+                  }`}
+                >
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-500 ${isActive ? card.iconBg : 'bg-slate-50'}`}>
+                      <CardIcon size={20} className={`transition-colors duration-500 ${isActive ? card.iconColor : 'text-slate-400'}`} />
+                    </div>
+                    <h3 className="font-bold text-[#1e293b]">{card.title}</h3>
+                    {isActive && (
+                      <ArrowRight size={16} className="text-[#f59e0b] ml-auto animate-pulse" />
+                    )}
+                  </div>
+                  <p className="text-sm text-slate-500 leading-relaxed">{card.desc}</p>
                 </div>
-                <h3 className="font-bold text-[#1e293b]">Naturlig Samtale</h3>
-              </div>
-              <p className="text-sm text-slate-500 leading-relaxed">Medarbejdere skriver bare hvad de har lavet — AI'en forstår konteksten og registrerer automatisk projekt, timer og opgave.</p>
-            </div>
-
-            <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center">
-                  <Bot size={20} className="text-amber-600" />
-                </div>
-                <h3 className="font-bold text-[#1e293b]">Intelligent Genkendelse</h3>
-              </div>
-              <p className="text-sm text-slate-500 leading-relaxed">TimeBot kender medarbejderens standard-projekt, husker tidligere opgaver, og stiller kun spørgsmål når noget er uklart.</p>
-            </div>
-
-            <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <CheckCircle size={20} className="text-blue-600" />
-                </div>
-                <h3 className="font-bold text-[#1e293b]">Bekræft & Godkend</h3>
-              </div>
-              <p className="text-sm text-slate-500 leading-relaxed">Før registrering viser AI'en en opsummering som medarbejderen bekræfter. Timerne sendes direkte til mester-dashboardet.</p>
-            </div>
-
-            <div className="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                  <Clock size={20} className="text-purple-600" />
-                </div>
-                <h3 className="font-bold text-[#1e293b]">Proaktive Påmindelser</h3>
-              </div>
-              <p className="text-sm text-slate-500 leading-relaxed">Har en medarbejder glemt at indberette? TimeBot sender automatisk en venlig rykker — så mesteren slipper for at ringe rundt.</p>
-            </div>
+              );
+            })}
           </div>
         </div>
       </div>
